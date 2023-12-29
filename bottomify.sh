@@ -9,6 +9,7 @@ cp gmOwO.png gm0/source/_static/assets/gm0-logo.png
 cp gmOwO.png gm0/source/_static/assets/gm0-logo_white.png
 
 rm -rf gm0/.git
+shopt -s dotglob
 mv gm0/* .
 
 git config user.email "i@didntask.com"
