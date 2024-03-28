@@ -1,0 +1,121 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - "*"
+jobs:
+  build-html:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: 3.7
+    - name: Install Python Dependencies
+      run: |
+        pip install -r source/requirements.txt
+    - name: Install Graphviz
+      run: |
+        sudo apt update
+        sudo apt install -y graphviz
+    - name: Build HTML
+      run: |
+        make html
+    - name: Archive HTML
+      uses: actions/upload-artifact@v2
+      with:
+        name: gm0-html
+        path: build/html/
+  build-pdf:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: 3.7
+    - name: Install Python Dependencies
+      run: |
+        pip install -r source/requirements.txt
+    - name: Install LaTeX
+      run: |
+        sudo apt update
+        sudo apt install -y texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra latexmk texlive-lang-greek texlive-luatex texlive-xetex texlive-fonts-extra dvipng librsvg2-bin graphviz
+    - name: Build PDF
+      run: |
+        make latexpdf
+    - name: Archive PDF
+      uses: actions/upload-artifact@v2
+      with:
+        name: gm0-pdf
+        path: build/latex/GameManual0.pdf
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: 3.7
+    - name: Install Dependencies
+      run: |
+        pip install -r source/requirements.txt
+    - name: Check Links (Diff)
+      run: |
+        git fetch origin main
+        make linkcheckdiff
+    - name: Archive Linkcheck Failure
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: linkcheck-output.txt
+        path: build/linkcheck/output.txt
+  check-linting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: 3.7
+    - name: Install Dependencies
+      run: |
+        pip install -r source/requirements.txt
+    - name: Check Lint
+      run: |
+        make lint
+  check-spelling:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: misspell
+      uses: reviewdog/action-misspell@v1
+      with:
+        locale: "US"
+        reporter: "github-check"
+  check-redirects:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Checkout main
+      run: |
+        git fetch origin main --depth=1
+    - uses: actions/setup-python@v3
+      with:
+        python-version: 3.7
+    - name: Install Dependencies
+      run: |
+        pip install -r source/requirements.txt
+    - name: Check redirects
+      run: |
+        make rediraffecheckdiff
+  check-unicode-characters:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Checkout main
+      run: |
+        git fetch origin main --depth=1
+    - name: Check Unicode characters
+      run: |
+        ./scripts/check-unicode-characters.sh

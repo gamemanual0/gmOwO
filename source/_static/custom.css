@@ -1,0 +1,64 @@
+.wy-nav-top, .wy-nav-side, .wy-side-nav-search {
+    background: #4e4a4a;
+}
+
+.wy-nav-side a:hover {
+    background: #404040;
+}
+
+/* Center caption text in their respective figure */
+div.figure.align-default {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    margin: 0;
+    transform: none;
+}
+
+/* Make sure captions cannot be wider than the figure they are describing */
+span.caption-text {
+    display: inline-block;
+    max-width: var(--image-width);
+    text-align: center;
+}
+
+footer {
+    font-size: var(--font-size--normal);
+}
+
+@media (prefers-color-scheme: dark) {
+    img.graphviz {
+        filter: invert(87%);
+    }
+
+    .dark-mode-invert {
+        filter: invert(50%);
+    }
+}
+
+/* Set colors for headers */
+.sd-card-header {
+    color: white !important;
+    background-color: rgb(245,127,37) !important;
+}
+
+/* Style inline glossary entries nicely */
+div.admonition-term dt {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+div.admonition-term dd {
+    margin: 0em;
+}
+
+div.admonition-terms dt {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+div.admonition-terms dd {
+    margin: 0em;
+}
