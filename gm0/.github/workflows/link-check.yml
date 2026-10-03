@@ -1,0 +1,25 @@
+name: Link Check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * *'
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    - name: Install Dependencies
+      run: pip install -r source/requirements.txt
+    - name: Check Links
+      run: make linkcheck
+    - name: Archive Linkcheck Failure
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: linkcheck-output.zip
+        path: build/linkcheck/output.txt
