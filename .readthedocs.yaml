@@ -1,0 +1,24 @@
+version: 2
+
+sphinx:
+  builder: html
+  configuration: source/conf.py
+  fail_on_warning: true
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.11"
+  apt_packages:
+    - graphviz
+    - ghostscript
+  jobs:
+    post_build:
+      - ./scripts/rtd-compress-pdf.sh
+
+formats:
+  - pdf
+
+python:
+  install:
+    - requirements: source/requirements.txt
